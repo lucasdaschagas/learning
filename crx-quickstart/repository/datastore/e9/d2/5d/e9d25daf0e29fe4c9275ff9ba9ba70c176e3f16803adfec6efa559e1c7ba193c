@@ -1,0 +1,819 @@
+angular.module("io.wcm.caconfig.templates", ["addCollectionItemModal.html", "addConfigModal.html", "configTable.html", "deleteConfigModal.html", "detailView.html", "errorModal.html", "infoModal.html", "multifield.html", "overviewView.html", "pathbrowser.html", "popupContainer.html", "popupContent.html", "propertyDropdown.html", "propertyEditLink.html", "propertyInputCheckbox.html", "propertyInputText.html", "propertyInputTextPreview.html", "propertyInputTextarea.html", "propertyRow.html", "propertyRowPreview.html", "saveConfigModal.html"]);
+
+angular.module("addCollectionItemModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("addCollectionItemModal.html",
+    "<div class=\"coral-Modal\" id=\"caconfig-addCollectionItemModal\"\n" +
+    "     ng-controller=\"AddCollectionItemController as addCollectionItem\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('modal.addCollectionItem.title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\"\n" +
+    "            data-dismiss=\"modal\" type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body\">\n" +
+    "    <form class=\"coral-Form coral-Form--vertical\" name=\"addCollectionItemForm\" novalidate>\n" +
+    "      <section class=\"coral-Form-fieldset\">\n" +
+    "      <div class=\"coral-Form-fieldwrapper\">\n" +
+    "          <label class=\"coral-Form-fieldlabel\" bo-text=\"i18n('config.name')\"></label>\n" +
+    "          <i class=\"coral-Form-fielderror coral-Icon coral-Icon--alert\"\n" +
+    "             data-init=\"quicktip\" data-quicktip-arrow=\"right\" data-quicktip-type=\"error\"\n" +
+    "             bo-attr\n" +
+    "             bo-attr-data-quicktip-content=\"i18n('modal.tooltip.unique')\"\n" +
+    "             role=\"img\" tabindex=\"0\"\n" +
+    "             ng-show=\"addCollectionItem.blacklist.indexOf(addCollectionItem.newCollectionName) !== -1\"></i>\n" +
+    "          <i class=\"coral-Form-fielderror coral-Icon coral-Icon--alert\"\n" +
+    "             data-init=\"quicktip\" data-quicktip-arrow=\"right\" data-quicktip-type=\"error\"\n" +
+    "             bo-attr\n" +
+    "             bo-attr-data-quicktip-content=\"i18n('modal.tooltip.allowed')\"\n" +
+    "             role=\"img\" tabindex=\"0\"\n" +
+    "             ng-show=\"addCollectionItemForm.collectionItemName.$error.pattern\"></i>\n" +
+    "          <input class=\"coral-Form-field coral-Textfield\"\n" +
+    "                 ng-class=\"{'ng-dirty ng-invalid' : (addCollectionItem.blacklist.indexOf(addCollectionItem.newCollectionName) !== -1)}\"\n" +
+    "                 id=\"caconfig-collectionItemName\" name=\"collectionItemName\"\n" +
+    "                 type=\"text\" placeholder=\"Item Name\"\n" +
+    "                 ng-model=\"addCollectionItem.newCollectionName\" ng-pattern=\"addCollectionItem.itemTitleRegex\">\n" +
+    "        </div>\n" +
+    "      </section>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button coral-Button--primary\" data-dismiss=\"modal\" type=\"button\"\n" +
+    "            ng-disabled=\"!addCollectionItemForm.$valid\n" +
+    "                         || addCollectionItem.blacklist.indexOf(addCollectionItem.newCollectionName) !== -1\n" +
+    "                         || !addCollectionItem.newCollectionName\"\n" +
+    "            ng-click=\"addCollectionItem.addItem()\" bo-text=\"i18n('button.ok')\">\n" +
+    "    </button>\n" +
+    "    <button class=\"coral-Button coral-Button--secondary\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-text=\"i18n('button.cancel')\">\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("addConfigModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("addConfigModal.html",
+    "<div class=\"coral-Modal\" id=\"caconfig-addConfigModal\"\n" +
+    "     ng-controller=\"AddConfigController as addConfig\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('modal.addConfig.title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body caconfig-addConfigModal-body\">\n" +
+    "    <form class=\"coral-Form coral-Form--aligned\" name=\"addConfigForm\">\n" +
+    "      <section class=\"coral-Form-fieldset\">\n" +
+    "        <span class=\"coral-Select\" id=\"caconfig-configurationSelect\">\n" +
+    "          <button class=\"coral-Select-button coral-MinimalButton\" type=\"button\">\n" +
+    "            <span class=\"coral-Select-button-text\" bo-text=\"i18n('button.choose')\"></span>\n" +
+    "          </button>\n" +
+    "          <select class=\"coral-Select-select\">\n" +
+    "            <option ng-repeat=\"item in addConfig.getConfigNames() | filter:{exists:false}\"\n" +
+    "                    bo-value=\"item.configName\"\n" +
+    "                    bo-text=\"item.label || item.configName\">\n" +
+    "            </option>\n" +
+    "          </select>\n" +
+    "        </span>\n" +
+    "      </section>\n" +
+    "    </form>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button coral-Button--primary\" data-dismiss=\"modal\" type=\"button\"\n" +
+    "            ng-click=\"addConfig.addConfig()\" bo-text=\"i18n('button.ok')\"></button>\n" +
+    "    <button class=\"coral-Button coral-Button--secondary\" data-dismiss=\"modal\" type=\"button\"\n" +
+    "            bo-text=\"i18n('button.cancel')\"></button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("configTable.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("configTable.html",
+    "<table bindonce=\"ctReady\"\n" +
+    "       class=\"caconfig-configTable coral-Table coral-Table--hover\"\n" +
+    "       ng-cloak>\n" +
+    "  <thead>\n" +
+    "    <tr class=\"coral-Table-row\">\n" +
+    "      <th class=\"coral-Table-headerCell\"  style=\"width: 15%;\">\n" +
+    "        <h3 bo-text=\"config.collectionItemName\"></h3>\n" +
+    "      </th>\n" +
+    "      <th class=\"coral-Table-headerCell\">\n" +
+    "        <p class=\"caconfig-if-is-preview\">\n" +
+    "          <span class=\"caconfig-edit-config caconfig-link coral-Link\" bo-text=\"i18n('config.edit')\" tabindex=\"0\"></span>\n" +
+    "        </p>\n" +
+    "        <label class=\"coral-Checkbox caconfig-if-not-preview caconfig-if-config-not-inherited caconfig-if-config-not-overridden\">\n" +
+    "          <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "                 ng-model=\"configPropertyInherit.value\"\n" +
+    "                 ng-change=\"configTable.handleConfigPropertyInheritChange(index)\" />\n" +
+    "          <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "          <span class=\"coral-Checkbox-description\" bo-text=\"i18n('config.inheritance.property')\"></span>\n" +
+    "        </label>\n" +
+    "        <p class=\"caconfig-if-not-preview caconfig-if-config-inherited\">\n" +
+    "          <span class=\"caconfig-if-is-collection\" bo-text=\"i18n('config.inheritance.collectionItem')\"></span>\n" +
+    "          <span class=\"caconfig-if-not-collection\" bo-text=\"i18n('config.inheritance.config')\"></span>\n" +
+    "          <span ng-click=\"configTable.breakInheritance(config)\" class=\"caconfig-link coral-Link\" bo-text=\"i18n('config.inheritance.break')\"></span>\n" +
+    "        </p>\n" +
+    "      </th>\n" +
+    "      <th class=\"coral-Table-headerCell\" style=\"width: 1%;\"></th>\n" +
+    "      <th class=\"coral-Table-headerCell\" style=\"width: 1%;\"></th>\n" +
+    "      <th class=\"coral-Table-headerCell\" style=\"width: 1%;\">\n" +
+    "        <i class=\"coral-Icon coral-Icon--delete caconfig-delete-item caconfig-if-is-collection caconfig-if-config-not-inherited\"\n" +
+    "           bo-title=\"i18n('button.deleteItem')\"\n" +
+    "           ng-click=\"configTable.removeCollectionItem(index)\"></i>\n" +
+    "      </th>\n" +
+    "    </tr>\n" +
+    "    <tr class=\"coral-Table-row\">\n" +
+    "      <th class=\"coral-Table-headerCell\" bo-text=\"i18n('config.property')\"></th>\n" +
+    "      <th class=\"coral-Table-headerCell\" bo-text=\"i18n('config.value')\"></th>\n" +
+    "      <th class=\"coral-Table-headerCell\">\n" +
+    "        <span class=\"caconfig-if-not-preview\" bo-text=\"i18n('config.description')\"></span>\n" +
+    "      </th>\n" +
+    "      <th class=\"coral-Table-headerCell\">\n" +
+    "        <span class=\"caconfig-if-not-preview\" bo-text=\"i18n('config.inherited')\"></span>\n" +
+    "      </th>\n" +
+    "      <th class=\"coral-Table-headerCell\">\n" +
+    "        <span class=\"caconfig-if-not-preview\" bo-text=\"i18n('config.overridden')\"></span>\n" +
+    "      </th>\n" +
+    "    </tr>\n" +
+    "  </thead>\n" +
+    "  <tbody class=\"caconfig-configTableBody\">\n" +
+    "    <!-- caconfig-property-row directives dynamically added here -->\n" +
+    "  </tbody>\n" +
+    "</table>\n" +
+    "\n" +
+    "");
+}]);
+
+angular.module("deleteConfigModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("deleteConfigModal.html",
+    "<div class=\"coral-Modal\" id=\"caconfig-deleteConfigModal\"\n" +
+    "     ng-controller=\"DeleteConfigController\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('modal.deleteConfig.title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body\">\n" +
+    "    <p bo-text=\"i18n('modal.deleteConfig.message')\"></p>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button coral-Button--warning\" data-dismiss=\"modal\" type=\"button\"\n" +
+    "            ng-click=\"deleteConfig()\" bo-text=\"i18n('button.ok')\"></button>\n" +
+    "    <button class=\"coral-Button coral-Button--secondary\" data-dismiss=\"modal\" type=\"button\"\n" +
+    "            bo-text=\"i18n('button.cancel')\"></button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("detailView.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("detailView.html",
+    "<form class=\"caconfig-detail\"\n" +
+    "      name=\"detail.configForm\" novalidate ng-cloak\n" +
+    "      bindonce=\"detail.dvReady\"\n" +
+    "      bo-class=\"detail.current.isCollection ? 'caconfig-is-collection' : 'caconfig-not-collection'\">\n" +
+    "  <button class=\"coral-Button coral-Button--square coral-Button--default\" type=\"button\"\n" +
+    "          bo-title=\"i18n('button.home')\"\n" +
+    "          ng-click=\"(detail.configForm.$dirty && detail.current.contextPath) ? saveWarning() : go()\">\n" +
+    "    <i class=\"coral-Icon coral-Icon--home\"></i>\n" +
+    "  </button>\n" +
+    "  <button class=\"coral-Button coral-Button--primary caconfig-if-form-valid-and-dirty\" type=\"button\"\n" +
+    "          ng-click=\"detail.saveConfig()\"\n" +
+    "          bo-if=\"i18n('button.save') && !!detail.current.contextPath\"\n" +
+    "          bo-text=\"i18n('button.save')\">\n" +
+    "  </button>\n" +
+    "  <button class=\"coral-Button coral-Button--primary caconfig-if-form-invalid-or-pristine\" type=\"button\"\n" +
+    "          disabled\n" +
+    "          bo-if=\"i18n('button.save') && !!detail.current.contextPath\"\n" +
+    "          bo-text=\"i18n('button.save')\">\n" +
+    "  </button>\n" +
+    "  <button class=\"coral-Button coral-Button--secondary\" type=\"button\"\n" +
+    "          ng-click=\"go(detail.current.parent ? detail.current.parent.configName : '')\"\n" +
+    "          bo-if=\"i18n('button.cancel')\"\n" +
+    "          bo-text=\"i18n('button.cancel')\">\n" +
+    "  </button>\n" +
+    "  <button class=\"coral-Button coral-Button--square coral-Button--default\" type=\"button\"\n" +
+    "          bo-title=\"detail.current.isCollection ? i18n('button.deleteCollection') : i18n('button.deleteConfig')\"\n" +
+    "          ng-show=\"detail.current.configs.length\"\n" +
+    "          bo-if=\"detail.current.contextPath\"\n" +
+    "          ng-click=\"detail.removeConfig()\">\n" +
+    "    <i class=\"coral-Icon coral-Icon--delete\"></i>\n" +
+    "  </button>\n" +
+    "\n" +
+    "  <p class=\"caconfig-contextPath\"\n" +
+    "     bo-if=\"detail.current.contextPath\">\n" +
+    "     <span bo-text=\"i18n('contextPath')\"></span>: <code bo-text=\"detail.current.contextPath\"></code>\n" +
+    "  </p>\n" +
+    "  <p class=\"caconfig-contextPath\"\n" +
+    "     bo-if=\"!detail.current.contextPath\" bo-text=\"i18n('noContextPath')\">\n" +
+    "  </p>\n" +
+    "\n" +
+    "  <h2>\n" +
+    "    <span class=\"caconfig-breadcrumb\" ng-repeat=\"breadcrumb in detail.current.breadcrumbs\">\n" +
+    "      <span class=\"coral-Link caconfig-breadcrumb-link\"\n" +
+    "            ng-click=\"detail.configForm.$dirty ? saveWarning(breadcrumb.configName) : go(breadcrumb.configName)\"\n" +
+    "            bo-text=\"breadcrumb.label\">\n" +
+    "      </span> /\n" +
+    "      <span bo-if=\"breadcrumb.itemName\" bo-text=\"breadcrumb.itemName + ' / '\"></span>\n" +
+    "    </span>\n" +
+    "    <span bo-text=\"detail.current.label\"></span>\n" +
+    "  </h2>\n" +
+    "  <p bo-text=\"detail.current.description\"></p>\n" +
+    "\n" +
+    "  <p class=\"caconfig-collectionInheritance coral-Well\"\n" +
+    "     bo-if=\"detail.current.isCollection\">\n" +
+    "    <label class=\"coral-Checkbox\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "             ng-model=\"detail.current.collectionProperties['sling:configCollectionInherit']\">\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "      <span class=\"coral-Checkbox-description\" bo-text=\"i18n('config.inheritance.collection')\"></span>\n" +
+    "    </label>\n" +
+    "  </p>\n" +
+    "\n" +
+    "  <p bo-if=\"detail.current.isCollection\">\n" +
+    "    <button class=\"coral-Button coral-Button--primary\" type=\"button\"\n" +
+    "            ng-click=\"detail.addCollectionItem()\"\n" +
+    "            bo-if=\"i18n('button.addItem')\"\n" +
+    "            bo-text=\"i18n('button.addItem')\"\n" +
+    "            title=\"{{detail.current.isLargeCollection && !detail.allConfigsVisible ? i18n('largeCollection.addCollectionItemHint') : i18n('button.addItem')}}\">\n" +
+    "    </button>\n" +
+    "    <button class=\"coral-Button coral-Button--square coral-Button--default\" type=\"button\"\n" +
+    "            bo-if=\"detail.current.isLargeCollection\"\n" +
+    "            ng-show=\"detail.allConfigsVisible\"\n" +
+    "            bo-title=\"i18n('button.toBottom')\"\n" +
+    "            ng-click=\"detail.toBottom()\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--arrowDown\"></i>\n" +
+    "    </button>\n" +
+    "  </p>\n" +
+    "\n" +
+    "  <p class=\"coral-Well caconfig-largeCollection\" bo-if=\"detail.current.isLargeCollection\">\n" +
+    "    <span bo-if=\"i18n('largeCollection.numberInCollection')\"\n" +
+    "          bo-text=\"i18n('largeCollection.numberInCollection')\"></span>:\n" +
+    "    <strong>{{detail.current.configs.length}}</strong>\n" +
+    "    <br>\n" +
+    "    <span bo-if=\"i18n('largeCollection.numberInEditor')\"\n" +
+    "          bo-text=\"i18n('largeCollection.numberInEditor')\"></span>:\n" +
+    "    <strong>{{detail.configLimit}}</strong><br>\n" +
+    "    <span bo-if=\"i18n('largeCollection.scrollHint')\"\n" +
+    "          bo-text=\"i18n('largeCollection.scrollHint')\"></span>\n" +
+    "    <br>\n" +
+    "    <span class=\"coral-Link caconfig-link\"\n" +
+    "          ng-click=\"detail.showAllConfigs()\"\n" +
+    "          bo-if=\"i18n('largeCollection.loadAll')\"\n" +
+    "          bo-text=\"i18n('largeCollection.loadAll')\">\n" +
+    "    </span>\n" +
+    "  </p>\n" +
+    "\n" +
+    "  <div class=\"caconfig-configurationDetails\"\n" +
+    "     bo-class=\"[\n" +
+    "       config.inherited ? 'caconfig-config-inherited' : 'caconfig-config-not-inherited',\n" +
+    "       config.overridden ? 'caconfig-config-overridden' : 'caconfig-config-not-overridden',\n" +
+    "       config.isNewItem ? 'caconfig-is-new-item' : 'caconfig-not-new-item',\n" +
+    "       detail.current.isLargeCollection ?  'caconfig-is-preview' : 'caconfig-not-preview'\n" +
+    "     ]\"\n" +
+    "     ng-repeat=\"config in detail.current.configs | limitTo:detail.configLimit track by config.collectionItemName\"\n" +
+    "     caconfig-config-table=\"config\"\n" +
+    "     index=\"$index\"\n" +
+    "     is-preview=\"detail.current.isLargeCollection\"\n" +
+    "     ng-cloak>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <p bo-if=\"detail.current.isCollection\"\n" +
+    "     ng-show=\"detail.current.configs.length && detail.allConfigsVisible\">\n" +
+    "    <button class=\"coral-Button coral-Button--primary\" type=\"button\"\n" +
+    "            ng-click=\"detail.addCollectionItem()\"\n" +
+    "            bo-if=\"i18n('button.addItem')\"\n" +
+    "            bo-text=\"i18n('button.addItem')\"></button>\n" +
+    "    <button class=\"coral-Button coral-Button--square coral-Button--default\" type=\"button\"\n" +
+    "            bo-if=\"detail.current.isLargeCollection\"\n" +
+    "            bo-title=\"i18n('button.toTop')\"\n" +
+    "            ng-click=\"detail.toTop()\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--arrowUp\"></i>\n" +
+    "    </button>\n" +
+    "  </p>\n" +
+    "\n" +
+    "</form>\n" +
+    "");
+}]);
+
+angular.module("errorModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("errorModal.html",
+    "<div class=\"coral-Modal\" id=\"caconfig-errorModal\"\n" +
+    "     ng-controller=\"ErrorController as errorModal\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body\">\n" +
+    "    <p>{{errorModal.message}}</p>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button\" data-dismiss=\"modal\" type=\"button\" bo-text=\"i18n('modal.close')\"></button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("infoModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("infoModal.html",
+    "<div class=\"coral-Modal\" id=\"caconfig-infoModal\"\n" +
+    "     ng-controller=\"InfoController as infoModal\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body\">\n" +
+    "    <p>{{infoModal.message}}</p>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button\" data-dismiss=\"modal\" type=\"button\" bo-text=\"i18n('modal.close')\"></button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("multifield.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("multifield.html",
+    "<div bindonce>\n" +
+    "  <div class=\"caconfig-multifield caconfig-multifield--empty caconfig-if-property-not-overridden-and-not-inherited\"\n" +
+    "      ng-if=\"!(values.length)\">\n" +
+    "    <label class=\"coral-Checkbox\"\n" +
+    "           bo-if=\"type==='checkbox'\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "             disabled />\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "    <input class=\"coral-Textfield\" type=\"type\"\n" +
+    "           bo-if=\"type!=='checkbox'\"\n" +
+    "           disabled />\n" +
+    "    <div class=\"coral-ButtonGroup\">\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button caconfig-if-config-inherited\"\n" +
+    "              disabled>\n" +
+    "        <i class=\"coral-Icon coral-Icon--add\"></i>\n" +
+    "      </button>\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button caconfig-if-config-not-inherited\"\n" +
+    "              ng-click=\"addNewValue(0)\">\n" +
+    "        <i class=\"coral-Icon coral-Icon--add\"></i>\n" +
+    "      </button>\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              disabled>\n" +
+    "        <i class=\"coral-Icon coral-Icon--minus\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div class=\"caconfig-multifield caconfig-if-property-overridden-or-inherited\"\n" +
+    "       ng-repeat=\"effectiveValue in effectiveValues\">\n" +
+    "    <label class=\"coral-Checkbox\"\n" +
+    "           bo-if=\"type==='checkbox'\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "             disabled\n" +
+    "             readonly\n" +
+    "             ng-model=\"effectiveValue.value\" />\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "    <input class=\"coral-Textfield\" type=\"type\"\n" +
+    "           bo-if=\"type!=='checkbox'\"\n" +
+    "           disabled\n" +
+    "           readonly\n" +
+    "           ng-model=\"effectiveValue.value\" />\n" +
+    "    <div class=\"coral-ButtonGroup\">\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              disabled>\n" +
+    "        <i class=\"coral-Icon coral-Icon--add\"></i>\n" +
+    "      </button>\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              disabled>\n" +
+    "        <i class=\"coral-Icon coral-Icon--minus\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div class=\"caconfig-multifield caconfig-if-config-inherited caconfig-if-property-not-overridden-and-not-inherited\"\n" +
+    "       ng-repeat=\"value in values\">\n" +
+    "    <label class=\"coral-Checkbox\"\n" +
+    "           bo-if=\"type==='checkbox'\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "             disabled\n" +
+    "             readonly\n" +
+    "             ng-model=\"value.value\" />\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "    <input class=\"coral-Textfield\" type=\"type\"\n" +
+    "           bo-if=\"type!=='checkbox'\"\n" +
+    "           disabled\n" +
+    "           readonly\n" +
+    "           ng-model=\"value.value\" />\n" +
+    "    <div class=\"coral-ButtonGroup\">\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              disabled >\n" +
+    "        <i class=\"coral-Icon coral-Icon--add\"></i>\n" +
+    "      </button>\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              disabled>\n" +
+    "        <i class=\"coral-Icon coral-Icon--minus\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "\n" +
+    "  <div class=\"caconfig-multifield caconfig-if-config-not-inherited caconfig-if-property-not-overridden-and-not-inherited\"\n" +
+    "       ng-repeat=\"value in values\">\n" +
+    "    <label class=\"coral-Checkbox\"\n" +
+    "           bo-if=\"type==='checkbox'\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "             ng-model=\"value.value\" />\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "    <input class=\"coral-Textfield\" type=\"type\"\n" +
+    "           bo-if=\"type!=='checkbox'\"\n" +
+    "           ng-model=\"value.value\"\n" +
+    "           ng-pattern=\"pattern\" />\n" +
+    "    <div class=\"coral-ButtonGroup\">\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              ng-click=\"addNewValue($index)\">\n" +
+    "        <i class=\"coral-Icon coral-Icon--add\"></i>\n" +
+    "      </button>\n" +
+    "      <button class=\"coral-ButtonGroup-item coral-Button coral-Button--secondary caconfig-disableable-button\"\n" +
+    "              ng-click=\"removeValue($index)\">\n" +
+    "        <i class=\"coral-Icon coral-Icon--minus\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("overviewView.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("overviewView.html",
+    "<div bindonce=\"overview.ovReady\" class=\"caconfig-overview\" ng-cloak>\n" +
+    "  <button class=\"coral-Button coral-Button--primary\" type=\"button\"\n" +
+    "          bo-disabled=\"!overview.hasNonExistingConfig()\n" +
+    "                       || !overview.state.contextPath\"\n" +
+    "          ng-click=\"overview.showNonExistingConfigs()\"\n" +
+    "          bo-text=\"i18n('button.add')\">\n" +
+    "  </button>\n" +
+    "  <button class=\"caconfig-publishButton coral-Button coral-Button--secondary\" type=\"button\"\n" +
+    "          ng-click=\"overview.publishPage()\"\n" +
+    "          bo-if=\"i18n('button.publish')\"\n" +
+    "          bo-text=\"i18n('button.publish')\">\n" +
+    "  </button>\n" +
+    "\n" +
+    "  <p class=\"caconfig-contextPath\"\n" +
+    "     bo-if=\"overview.state.contextPath\">\n" +
+    "     <span bo-text=\"i18n('contextPath')\"></span>: <code bo-text=\"overview.state.contextPath\"></code>\n" +
+    "  </p>\n" +
+    "  <p class=\"caconfig-contextPath\"\n" +
+    "     bo-if=\"!overview.state.contextPath\" bo-text=\"i18n('noContextPath')\">\n" +
+    "  </p>\n" +
+    "\n" +
+    "  <table class=\"coral-Table coral-Table--hover\"\n" +
+    "         bo-if=\"(overview.state.configNames | filter:{exists:true}).length\" ng-cloak>\n" +
+    "    <thead>\n" +
+    "      <tr class=\"coral-Table-row\">\n" +
+    "        <th class=\"coral-Table-headerCell\" style=\"width:1%\"></th>\n" +
+    "        <th class=\"coral-Table-headerCell\" bo-text=\"i18n('config.name')\"></th>\n" +
+    "        <th class=\"coral-Table-headerCell\" bo-text=\"i18n('config.description')\"></th>\n" +
+    "        <th class=\"coral-Table-headerCell\" style=\"width:1%\"></th>\n" +
+    "      </tr>\n" +
+    "    </thead>\n" +
+    "    <tbody>\n" +
+    "      <tr class=\"coral-Table-row\"\n" +
+    "          ng-repeat=\"config in overview.state.configNames | filter:{exists:true}\"\n" +
+    "          ng-click=\"go(config.configName)\" ng-cloak>\n" +
+    "        <td class=\"coral-Table-cell\">\n" +
+    "          <i class=\"coral-Icon coral-Icon--sizeS\"\n" +
+    "             bo-class=\"config.collection ? 'coral-Icon--pages' : 'coral-Icon--page'\"></i>\n" +
+    "        </td>\n" +
+    "        <td class=\"coral-Table-cell\" bo-text=\"config.label || config.configName\"></td>\n" +
+    "        <td class=\"coral-Table-cell\" bo-text=\"config.description\"></td>\n" +
+    "        <td class=\"coral-Table-cell\">\n" +
+    "          <i bo-if=\"config.overridden\"\n" +
+    "             class=\"coral-Icon coral-Icon--sizeS coral-Icon--lockOn\"\n" +
+    "             data-init=\"quicktip\" data-quicktip-arrow=\"right\" data-quicktip-type=\"info\" role=\"img\" tabindex=\"0\"\n" +
+    "             bo-attr\n" +
+    "             bo-attr-data-quicktip-content=\"i18n(config.collection ? 'config.tooltip.overriddenCollection' : 'config.tooltip.overriddenConfig')\"\n" +
+    "          ></i>\n" +
+    "          <i bo-if=\"!config.overridden && config.inherited\"\n" +
+    "             class=\"coral-Icon coral-Icon--sizeS coral-Icon--link\"\n" +
+    "             data-init=\"quicktip\" data-quicktip-arrow=\"right\" data-quicktip-type=\"info\" role=\"img\" tabindex=\"0\"\n" +
+    "             bo-attr\n" +
+    "             bo-attr-data-quicktip-content=\"i18n(config.collection ? 'config.tooltip.inheritedCollection' : 'config.tooltip.inheritedConfig')\"\n" +
+    "          ></i>\n" +
+    "          <i bo-if=\"!config.overridden && !config.inherited\"\n" +
+    "             class=\"coral-Icon coral-Icon--sizeS coral-Icon--linkOff\"\n" +
+    "             data-init=\"quicktip\" data-quicktip-arrow=\"right\" data-quicktip-type=\"info\" role=\"img\" tabindex=\"0\"\n" +
+    "             bo-attr\n" +
+    "             bo-attr-data-quicktip-content=\"i18n(config.collection ? 'config.tooltip.notInheritedCollection' : 'config.tooltip.notInheritedConfig')\"\n" +
+    "          ></i>\n" +
+    "        </td>\n" +
+    "      </tr>\n" +
+    "    </tbody>\n" +
+    "  </table>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("pathbrowser.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("pathbrowser.html",
+    "<div bindonce\n" +
+    "     class=\"caconfig-pathbrowser\">\n" +
+    "  <span class=\"coral-PathBrowser--disabled caconfig-if-property-overridden-or-inherited\">\n" +
+    "    <span class=\"coral-InputGroup coral-InputGroup--block\">\n" +
+    "      <input class=\"coral-InputGroup-input coral-Textfield\"\n" +
+    "             type=\"text\" autocomplete=\"off\"\n" +
+    "             disabled\n" +
+    "             readonly\n" +
+    "             ng-model=\"property.effectiveValue\" />\n" +
+    "      <span class=\"coral-InputGroup-button\">\n" +
+    "        <button class=\"coral-Button coral-Button--square caconfig-disableable-button\"\n" +
+    "                type=\"button\" bo-title=\"i18n('button.browse')\"\n" +
+    "                disabled>\n" +
+    "          <i class=\"coral-Icon coral-Icon--sizeS coral-Icon--folderSearch\"></i>\n" +
+    "        </button>\n" +
+    "      </span>\n" +
+    "    </span>\n" +
+    "  </span>\n" +
+    "  <span class=\"coral-PathBrowser caconfig-if-property-not-overridden-and-not-inherited\">\n" +
+    "    <span class=\"coral-InputGroup coral-InputGroup--block\">\n" +
+    "      <input class=\"coral-InputGroup-input coral-Textfield js-coral-pathbrowser-input caconfig-if-config-inherited\"\n" +
+    "             type=\"text\" autocomplete=\"off\"\n" +
+    "             disabled\n" +
+    "             readonly\n" +
+    "             ng-model=\"property.value\" />\n" +
+    "      <input class=\"coral-InputGroup-input coral-Textfield js-coral-pathbrowser-input caconfig-if-config-not-inherited\"\n" +
+    "             type=\"text\" autocomplete=\"off\"\n" +
+    "             ng-model=\"property.value\" />\n" +
+    "      <span class=\"coral-InputGroup-button\">\n" +
+    "        <button class=\"coral-Button coral-Button--square js-coral-pathbrowser-button caconfig-if-config-inherited caconfig-disableable-button\"\n" +
+    "                type=\"button\" bo-title=\"i18n('button.browse')\"\n" +
+    "                disabled>\n" +
+    "        <button class=\"coral-Button coral-Button--square js-coral-pathbrowser-button caconfig-if-not-config-inherited caconfig-disableable-button\"\n" +
+    "                type=\"button\" bo-title=\"i18n('button.browse')\">\n" +
+    "          <i class=\"coral-Icon coral-Icon--sizeS coral-Icon--folderSearch\"></i>\n" +
+    "        </button>\n" +
+    "      </span>\n" +
+    "    </span>\n" +
+    "  </span>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("popupContainer.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("popupContainer.html",
+    "<div bindonce>\n" +
+    "  <button class=\"coral-MinimalButton\" bo-attr bo-attr-data-target=\"'#' + id\" data-toggle=\"popover\">\n" +
+    "    <i class=\"coral-Icon coral-Icon--infoCircle coral-Icon--sizeM coral-MinimalButton-icon\"></i>\n" +
+    "  </button>\n" +
+    "  <div class=\"coral-Popover\" bo-id=\"id\" ng-transclude>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("popupContent.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("popupContent.html",
+    "<div class=\"coral-Popover-content u-coral-padding\" bo-text=\"content\">\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyDropdown.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyDropdown.html",
+    "<div class=\"caconfig-property-dropdown\" bindonce=\"dropdownReady\" ng-model=\"property.value\">\n" +
+    "  <span class=\"coral-Select caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\" bo-id=\"id\">\n" +
+    "    <button class=\"coral-Select-button coral-MinimalButton\" type=\"button\">\n" +
+    "      <span class=\"coral-Select-button-text\" bo-text=\"multivalue ? i18n('button.choose') : ''\"></span>\n" +
+    "    </button>\n" +
+    "    <select class=\"coral-Select-select\">\n" +
+    "      <option bo-if=\"multivalue\" disabled selected value bo-text=\"i18n('button.choose')\"></option>\n" +
+    "      <option bo-if=\"!multivalue\" selected></option>\n" +
+    "      <option ng-repeat=\"option in dropdownOptions\"\n" +
+    "              bo-value=\"option.value\"\n" +
+    "              bo-text=\"option.description\">\n" +
+    "      </option>\n" +
+    "    </select>\n" +
+    "  </span>\n" +
+    "  <span class=\"coral-Select caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\">\n" +
+    "    <button class=\"coral-Select-button coral-MinimalButton\" type=\"button\" readonly disabled>\n" +
+    "      <span class=\"coral-Select-button-text\" bo-text=\"i18n('button.choose')\"></span>\n" +
+    "    </button>\n" +
+    "    <ol class=\"coral-TagList caconfig-dummy-taglist\" role=\"list\"></ol>\n" +
+    "  </span>\n" +
+    "  <span class=\"coral-Select caconfig-if-property-overridden-or-inherited\">\n" +
+    "    <button class=\"coral-Select-button coral-MinimalButton\" type=\"button\" readonly disabled>\n" +
+    "      <span class=\"coral-Select-button-text\" ng-bind=\"getOptionText(property.effectiveValue)\"></span>\n" +
+    "    </button>\n" +
+    "    <ol class=\"coral-TagList caconfig-dummy-taglist caconfig-dummy-taglist--effective\" role=\"list\"></ol>\n" +
+    "  </span>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyEditLink.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyEditLink.html",
+    "<div bindonce>\n" +
+    "  <button class=\"coral-Button coral-Button--block coral-Button--default caconfig-if-config-not-inherited-and-not-new-item\"\n" +
+    "          ng-click=\"configForm.$dirty ? saveWarning(configName)\n" +
+    "                    : go(configName)\"\n" +
+    "          bo-text=\"linkText\">\n" +
+    "  </button>\n" +
+    "  <button class=\"coral-Button coral-Button--block coral-Button--default caconfig-if-config-inherited-or-new-item\"\n" +
+    "          disabled\n" +
+    "          bo-text=\"linkText\">\n" +
+    "  </button>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyInputCheckbox.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyInputCheckbox.html",
+    "<div>\n" +
+    "  <label class=\"coral-Checkbox caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\">\n" +
+    "    <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "           ng-model=\"property.value\" />\n" +
+    "    <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "  </label>\n" +
+    "  <label class=\"coral-Checkbox caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\">\n" +
+    "    <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "           ng-model=\"property.value\"\n" +
+    "           disabled readonly />\n" +
+    "    <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "  </label>\n" +
+    "  <label class=\"coral-Checkbox caconfig-if-property-overridden-or-inherited\">\n" +
+    "    <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "           ng-model=\"property.effectiveValue\"\n" +
+    "           disabled readonly />\n" +
+    "    <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "  </label>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyInputText.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyInputText.html",
+    "<div>\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\" type=\"text\"\n" +
+    "         ng-model=\"property.value\"\n" +
+    "         ng-pattern=\"pattern\" />\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\" type=\"text\"\n" +
+    "         ng-model=\"property.value\"\n" +
+    "         disabled readonly />\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-overridden-or-inherited\" type=\"text\"\n" +
+    "         ng-model=\"property.effectiveValue\"\n" +
+    "         disabled readonly />\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyInputTextPreview.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyInputTextPreview.html",
+    "<div>\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\" type=\"text\"\n" +
+    "         bo-value=\"property.value\"/>\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\" type=\"text\"\n" +
+    "         bo-value=\"property.value\"\n" +
+    "         disabled readonly />\n" +
+    "  <input class=\"coral-Textfield caconfig-if-property-overridden-or-inherited\" type=\"text\"\n" +
+    "         bo-value=\"property.effectiveValue\"\n" +
+    "         disabled readonly />\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyInputTextarea.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyInputTextarea.html",
+    "<div>\n" +
+    "  <textarea is=\"coral-textarea\" class=\"caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\"\n" +
+    "            ng-model=\"property.value\"/>\n" +
+    "  <textarea is=\"coral-textarea\" class=\"caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\"\n" +
+    "            ng-model=\"property.value\"\n" +
+    "            disabled readonly />\n" +
+    "  <textarea is=\"coral-textarea\" class=\"caconfig-if-property-overridden-or-inherited\"\n" +
+    "            ng-model=\"property.effectiveValue\"\n" +
+    "            disabled readonly />\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("propertyRow.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyRow.html",
+    "<tr bindonce\n" +
+    "    class=\"coral-Table-row\"\n" +
+    "    ng-class=\"property.inherited ? 'caconfig-property-inherited' : 'caconfig-property-not-inherited'\"\n" +
+    "    bo-class=\"[property.overridden ? 'caconfig-property-overridden' : 'caconfig-property-not-overridden',\n" +
+    "              (property.nestedConfig || property.nestedConfigCollection) ? 'caconfig-is-nested' : 'caconfig-not-nested']\"\n" +
+    "    bo-title=\"property.name\" ng-cloak>\n" +
+    "  <td class=\"coral-Table-cell\" bo-text=\"property.metadata.label || property.name\"></td>\n" +
+    "\n" +
+    "  <td class=\"coral-Table-cell\" ng-transclude>\n" +
+    "    <!-- caconfig-property-input dynamically added here -->\n" +
+    "  </td>\n" +
+    "\n" +
+    "  <td class=\"coral-Table-cell\">\n" +
+    "    <div bo-if=\"property.metadata.description\">\n" +
+    "      <caconfig-description-popup>\n" +
+    "        <caconfig-popup-content content=\"property.metadata.description\">\n" +
+    "        </caconfig-popup-content>\n" +
+    "      </caconfig-description-popup>\n" +
+    "    </div>\n" +
+    "  </td>\n" +
+    "  <td class=\"coral-Table-cell\">\n" +
+    "    <label class=\"coral-Checkbox\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "        ng-model=\"property.inherited\"\n" +
+    "        ng-disabled=\"!propertyInheritanceEnabled\n" +
+    "                     || property.overridden || property.nestedConfig\n" +
+    "                     || property.nestedConfigCollection\"\n" +
+    "        ng-change=\"propertyRow.handleInheritedChange(property)\">\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "  </td>\n" +
+    "  <td class=\"coral-Table-cell\">\n" +
+    "    <label class=\"coral-Checkbox\">\n" +
+    "      <input class=\"coral-Checkbox-input\" type=\"checkbox\"\n" +
+    "        ng-model=\"property.overridden\" disabled readonly>\n" +
+    "      <span class=\"coral-Checkbox-checkmark\"></span>\n" +
+    "    </label>\n" +
+    "  </td>\n" +
+    "</tr>\n" +
+    "");
+}]);
+
+angular.module("propertyRowPreview.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("propertyRowPreview.html",
+    "<tr bindonce\n" +
+    "    class=\"coral-Table-row coral-Table-row--preview\"\n" +
+    "    bo-class=\"[property.inherited ? 'caconfig-property-inherited' : 'caconfig-property-not-inherited',\n" +
+    "               property.overridden ? 'caconfig-property-overridden' : 'caconfig-property-not-overridden',\n" +
+    "              (property.nestedConfig || property.nestedConfigCollection) ? 'caconfig-is-nested' : 'caconfig-not-nested']\"\n" +
+    "    bo-title=\"property.name\" ng-cloak>\n" +
+    "  <td class=\"coral-Table-cell\" bo-text=\"property.metadata.label || property.name\"></td>\n" +
+    "  <td class=\"coral-Table-cell\">\n" +
+    "    <span class=\"caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-not-inherited\" bo-text=\"property.value\"></span>\n" +
+    "    <span class=\"caconfig-if-property-not-overridden-and-not-inherited caconfig-if-config-inherited\" bo-text=\"property.value\"></span>\n" +
+    "    <span class=\"caconfig-if-property-overridden-or-inherited\" bo-text=\"property.effectiveValue\"></span>\n" +
+    "  </td>\n" +
+    "  <td class=\"coral-Table-cell\"></td>\n" +
+    "  <td class=\"coral-Table-cell\"></td>\n" +
+    "  <td class=\"coral-Table-cell\"></td>\n" +
+    "</tr>\n" +
+    "");
+}]);
+
+angular.module("saveConfigModal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("saveConfigModal.html",
+    "<div class=\"coral-Modal\"\n" +
+    "     id=\"caconfig-saveConfigModal\"\n" +
+    "     ng-controller=\"SaveConfigController as saveConfig\"\n" +
+    "     bindonce>\n" +
+    "  <div class=\"coral-Modal-header\">\n" +
+    "    <i class=\"coral-Modal-typeIcon coral-Icon coral-Icon--sizeS\"></i>\n" +
+    "    <h2 class=\"coral-Modal-title coral-Heading coral-Heading--2\" bo-text=\"i18n('modal.saveConfig.title')\"></h2>\n" +
+    "    <button class=\"coral-MinimalButton coral-Modal-closeButton\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\" bo-title=\"i18n('modal.close')\">\n" +
+    "      <i class=\"coral-Icon coral-Icon--sizeXS coral-Icon--close coral-MinimalButton-icon\"></i>\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-body\">\n" +
+    "    <p bo-text=\"i18n('modal.saveConfig.message')\"></p>\n" +
+    "  </div>\n" +
+    "  <div class=\"coral-Modal-footer\">\n" +
+    "    <button class=\"coral-Button coral-Button--primary\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\"\n" +
+    "            ng-click=\"saveConfig.saveConfigWithRedirect()\"\n" +
+    "            bo-text=\"i18n('button.save')\">\n" +
+    "    </button>\n" +
+    "    <button class=\"coral-Button coral-Button--secondary\"  data-dismiss=\"modal\"\n" +
+    "            type=\"button\"\n" +
+    "            ng-click=\"goToRedirectUrl()\"\n" +
+    "            bo-text=\"i18n('button.discard')\">\n" +
+    "    </button>\n" +
+    "    <button class=\"coral-Button coral-Button--secondary\" data-dismiss=\"modal\"\n" +
+    "            type=\"button\"\n" +
+    "            bo-text=\"i18n('button.cancel')\">\n" +
+    "    </button>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
