@@ -20,26 +20,21 @@ public class ProductOfMineTestModel {
 
     private ProductOfMine product;
 
-    private Page page;
-    private Resource resource;
-    private final String NAME = "some name";
-    private final String DESCRIPTION = "some description";
+    private final String NAME = "name";
+    private final String DESCRIPTION = "description";
 
     @BeforeEach
     public void setup() throws Exception {
 
-        // prepare a page with a test resource
-        page = context.create().page("/content/mypage");
-        resource = context.create().resource(page, "product",
+        Page page = context.create().page("/content/mypage");
+        Resource resource = context.create().resource(page, "product",
                 "sling:resourceType", "web-train/components/product-of-mine", "name", NAME,
                 "description", DESCRIPTION);
 
-        // create sling model
         product = resource.adaptTo(ProductOfMine.class);
     }
 
     @Test
-    @Order(1)
     void testGetName() throws Exception {
         String nameMsg = product.getName();
         assertNotNull(nameMsg);
@@ -47,7 +42,6 @@ public class ProductOfMineTestModel {
     }
 
     @Test
-    @Order(2)
     void testGetDescription() throws Exception{
         String descriptionMsg = product.getDescription();
         assertNotNull(descriptionMsg);

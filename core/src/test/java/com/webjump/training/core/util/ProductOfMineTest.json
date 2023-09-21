@@ -1,5 +1,5 @@
 {
-  "product=of-mine":{
+  "product-of-mine":{
     "primaryType": "nt:unstructured",
     "resourceType": "web-train/components/product-of-mine"
   }
