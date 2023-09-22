@@ -39,8 +39,9 @@ public class ProductServiceImpl implements ProductService {
 
 
                 ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
-                valueMap.put("name", product.getName());
-                valueMap.put("description", product.getDescription());
+                assert valueMap != null;
+                valueMap.put("name".toLowerCase(), product.getName());
+                valueMap.put("description".toLowerCase(), product.getDescription());
 
                 resolver.commit();
             } catch (IOException e) {

@@ -36,7 +36,8 @@ public class NewServletOfMineTest {
 
     @Test
     void doPostTest() throws IOException {
-        context.create().resource("/content/servletTest","jcr:title", "test","name","name","description","description");
+        context.create().resource("/content/servletTest","jcr:title", "test","name","name"
+                ,"description","description");
         context.currentResource("/content/servletTest");
 
 //        context.currentPage(context.pageManager().getPage("/content/mypage"));

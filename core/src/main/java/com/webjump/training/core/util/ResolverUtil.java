@@ -22,5 +22,9 @@ public class ResolverUtil {
         paramMap.put(ResourceResolverFactory.SUBSERVICE, WEB_TRAIN_USER);
         return factory.getServiceResourceResolver(paramMap);
     }
-
+// WARNING
+//    For the scheduler to run properly, create a new user on the localhost:4502/crx/explorer/index.jsp with
+//    the name of your preference and path "system" and assign his permissions on localhost:4502/useradmin,
+//    then you need to declare him in localhost:4502/system/console/configMgr go to mapper service amendment, and declare
+//    like this example: projectName.core:youUserToBeUsingInCode=yourSystemUser, only then this class will have an effect
 }
