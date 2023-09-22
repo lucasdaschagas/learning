@@ -26,6 +26,13 @@ public class MySchedular implements Runnable {
     @Reference
     private  ResourceResolverFactory resolverFactory;
 
+    public void bindScheduler(Scheduler scheduler){
+        this.scheduler = scheduler;
+    }
+    public void bindFactory(ResourceResolverFactory factory){
+        this.resolverFactory = factory;
+    }
+
     @Activate
     protected void activate(SchedulerConfig config){
         schedulerID = config.schedulerName().hashCode();
