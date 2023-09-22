@@ -1,48 +1,51 @@
 package com.webjump.training.core.servlets;
-import com.day.cq.wcm.api.Page;
-import com.webjump.training.core.models.ProductOfMine;
+import com.webjump.training.core.services.ProductServiceImpl;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 
-import org.apache.sling.api.resource.Resource;
+
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-@ExtendWith(AemContextExtension.class)
+
+
+@ExtendWith({AemContextExtension.class, MockitoExtension.class})
 public class NewServletOfMineTest {
 
-    private final AemContext context = new AemContext();
-    private NewServletOfMine servlet;
-    private ProductOfMine product;
+    @Mock
+    private ResourceResolverFactory factory;
+    @Mock
+    private ProductServiceImpl productService;
+    private final AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+    @InjectMocks
+    private NewServletOfMine servlet = new NewServletOfMine();
+
     private String NAME = "name";
     private String DESCRIPTION = "description";
 
-//    @BeforeEach
-//    public void setup() {
-//
-//        Page page = context.create().page("/content/mypage");
-//        Resource resource = context.create().resource(page, "product",
-//                "sling:resourceType", "web-train/components/product-of-mine", "name", NAME,
-//                "description", DESCRIPTION);
-//
-//        product = resource.adaptTo(ProductOfMine.class);
-//
-//    }
+    @BeforeEach
+    public void setup() {
+        context.registerService(ResourceResolverFactory.class, factory);
+        servlet.bindService(productService);
+
+    }
 
     @Test
     void doPostTest() throws IOException {
-        context.create().resource("/content/servletTest","jcr:title", "test","name","name"
-                ,"description","description");
-        context.currentResource("/content/servletTest");
 
-//        context.currentPage(context.pageManager().getPage("/content/mypage"));
-//        context.currentResource(context.resourceResolver().getResource("web-train/components/product-of-mine"));
-//        context.requestPathInfo().setResourcePath("bin/servlets/myServlet");
+
+        context.build().resource("/content/test", "jcr:title", "servletTest","name","","description","").commit();
+        context.currentResource("/content/test");
 
         MockSlingHttpServletRequest request = context.request();
         MockSlingHttpServletResponse response = context.response();
@@ -50,7 +53,7 @@ public class NewServletOfMineTest {
         request.addHeader("name","anotherName");
         request.addHeader("description","anotherDescription");
 
-
         servlet.doPost(request,response);
+
     }
 }

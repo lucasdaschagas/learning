@@ -34,6 +34,10 @@ public class NewServletOfMine extends SlingAllMethodsServlet {
         @Reference
         private ProductServiceImpl service;
 
+        public void bindService(ProductServiceImpl productService) {
+                this.service = productService;
+        }
+
         @Override
         protected void doPost(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws IOException {
                 logger.info("<<<<<<<<<<<Doing Post>>>>>>>>>>>>>");
@@ -50,12 +54,14 @@ public class NewServletOfMine extends SlingAllMethodsServlet {
                 response.getWriter().write("Post Ended");
                 logger.info("<<<<<<<<<<<Post Ended>>>>>>>>>>>>>");
         }
+
         @Override
-        protected void doGet(@NotNull  SlingHttpServletRequest request, @NotNull  SlingHttpServletResponse response) throws IOException {
+        protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) throws IOException {
                 final Resource resource = request.getResource();
                 response.setContentType("text/plain");
                 response.getWriter().write("Title = " + resource.getValueMap().get(JcrConstants.JCR_TITLE));
         }
+
 }
 
 
