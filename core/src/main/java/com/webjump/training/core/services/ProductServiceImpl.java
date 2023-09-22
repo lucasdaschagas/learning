@@ -26,6 +26,12 @@ public class ProductServiceImpl implements ProductService {
     private ResourceResolver resolver;
     @Reference
     private Resource resource;
+    public void bindResourceResolver(ResourceResolver resolver){
+        this.resolver = resolver;
+    }public void bindResource(Resource resource){
+        this.resource = resource;
+    }
+
 
     @Override
     public void saveProduct(SlingHttpServletRequest req) throws PersistenceException {

@@ -27,6 +27,7 @@ public class MySchedulerTest {
 
     @BeforeEach
     public void setup(){
+        context.registerService(ResourceResolverFactory.class, factory);
 
     }
     @Test
