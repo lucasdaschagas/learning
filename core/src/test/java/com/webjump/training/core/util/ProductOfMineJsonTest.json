@@ -1,0 +1,8 @@
+{
+  "product-of-mine": {
+    "jcr:title": "ProductOfMine",
+    "primaryType": "cq:Component",
+    "name": "otherName",
+    "description": "anotherDescription"
+  }
+}
