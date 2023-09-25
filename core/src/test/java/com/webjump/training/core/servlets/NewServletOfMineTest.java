@@ -30,8 +30,6 @@ public class NewServletOfMineTest {
     @InjectMocks
     private NewServletOfMine servlet = new NewServletOfMine();
 
-    private String NAME = "name";
-    private String DESCRIPTION = "description";
 
     @BeforeEach
     public void setup() {
@@ -50,8 +48,8 @@ public class NewServletOfMineTest {
         MockSlingHttpServletRequest request = context.request();
         MockSlingHttpServletResponse response = context.response();
 
-        request.addHeader("name","anotherName");
-        request.addHeader("description","anotherDescription");
+        request.addRequestParameter("name","anotherName");
+        request.addRequestParameter("description","anotherDescription");
 
         servlet.doPost(request,response);
 

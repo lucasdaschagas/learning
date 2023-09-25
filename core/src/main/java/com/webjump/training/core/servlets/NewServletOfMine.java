@@ -43,7 +43,7 @@ public class NewServletOfMine extends SlingAllMethodsServlet {
                 logger.info("<<<<<<<<<<<Doing Post>>>>>>>>>>>>>");
 
                 try {
-                        service.saveProduct(request);
+                        service.saveProduct(request, response);
                         response.setStatus(HttpServletResponse.SC_OK);
                 } catch (ErrorPersistingObjectException e) {
                         e.getMessage();
