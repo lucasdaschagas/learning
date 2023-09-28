@@ -1,0 +1,13 @@
+{
+    "product_of_mine": {
+        "jcr:primaryType": "nt:unstructured",
+        "jcr:createdBy": "admin",
+        "description": "New rentable job",
+        "jcr:lastModifiedBy": "admin",
+        "jcr:created": "Wed Sep 13 2023 10:12:50 GMT-0300",
+        "name": "Coffin Tester",
+        "text": "Some default text",
+        "jcr:lastModified": "Wed Sep 27 2023 12:14:22 GMT-0300",
+        "sling:resourceType": "web-train/components/product-of-mine"
+}
+}

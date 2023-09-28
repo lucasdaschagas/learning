@@ -87,6 +87,7 @@ Import-Package: javax.annotation;version=0.0.0,*
             <artifactId>slf4j-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <!-- OSGi Dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
@@ -133,6 +134,7 @@ Import-Package: javax.annotation;version=0.0.0,*
             <artifactId>org.osgi.util.tracker</artifactId>
         </dependency>
         <!-- Other Dependencies -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -187,6 +189,12 @@ Import-Package: javax.annotation;version=0.0.0,*
 
 
         <!-- Testing -->
+
+        <dependency> <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.12.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

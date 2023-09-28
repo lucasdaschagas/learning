@@ -5,14 +5,12 @@ import com.webjump.training.core.util.ResolverUtil;
 import org.apache.sling.api.resource.*;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ScheduledFuture;
 
 
 @Component(service = Runnable.class, immediate = true)
@@ -25,6 +23,11 @@ public class MySchedular implements Runnable {
     private Scheduler scheduler;
     @Reference
     private  ResourceResolverFactory resolverFactory;
+    private ScheduledFuture<?> scheduledFuture;
+    private ResourceResolver resolver;
+    private Resource resource;
+
+
 
     public void bindScheduler(Scheduler scheduler){
         this.scheduler = scheduler;
@@ -41,30 +44,34 @@ public class MySchedular implements Runnable {
 
     @Deactivate
     protected void deactivate(){
+        if (scheduledFuture != null){
+            scheduledFuture.cancel(true);
+        }
+    }
+    @Modified
+    protected void modified(SchedulerConfig config){
         removeScheduler();
+        activate(config);
     }
 
     private void removeScheduler(){
         scheduler.unschedule(String.valueOf(schedulerID));
     }
 
-    private void addScheduler(SchedulerConfig config){
+    public void addScheduler(SchedulerConfig config){
         ScheduleOptions scheduleOptions = scheduler.EXPR(config.time());
         scheduleOptions.name(String.valueOf(schedulerID));
         scheduleOptions.canRunConcurrently(false);
-        scheduler.schedule(this,scheduleOptions);
+        scheduler.schedule(this, scheduleOptions);
         log.info("\n---------------Scheduler added---------------");
         ScheduleOptions scheduleOptionsNow = scheduler.NOW();
-        scheduler.schedule(this,scheduleOptionsNow);
-
+        scheduler.schedule(this, scheduleOptionsNow);
     }
 
 
 
     @Override
     public void run() {
-            ResourceResolver resolver;
-            Resource resource;
         try {
             resolver = ResolverUtil.newResolver(resolverFactory);
             resource = resolver.getResource("/content/web-train/us/en/jcr:content/root/container/container/product_of_mine");
@@ -83,4 +90,6 @@ public class MySchedular implements Runnable {
 
         log.info("\n---------------Scheduler running---------------");
     }
+
+
 }

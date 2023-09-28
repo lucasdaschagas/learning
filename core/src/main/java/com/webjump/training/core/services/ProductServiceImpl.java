@@ -29,17 +29,12 @@ public class ProductServiceImpl implements ProductService {
     private ResourceResolver resolver;
     @Reference
     private Resource resource;
-    public void bindResourceResolver(ResourceResolver resolver){
-        this.resolver = resolver;
-    }public void bindResource(Resource resource){
-        this.resource = resource;
-    }
-
 
     @Override
     public void saveProduct(SlingHttpServletRequest req, SlingHttpServletResponse resp) throws PersistenceException {
         resource = req.getResource();
         resolver = req.getResourceResolver();
+        JSONObject productJson = null;
 
         if (resource != null) {
             try {
@@ -49,13 +44,13 @@ public class ProductServiceImpl implements ProductService {
 
                 ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
                 assert valueMap != null;
-                valueMap.put("name".toLowerCase(), product.getName());
-                valueMap.put("description".toLowerCase(), product.getDescription());
+                valueMap.put("name", product.getName());
+                valueMap.put("description", product.getDescription());
 
 
-                JSONObject productJson = new JSONObject();
+                productJson = new JSONObject();
                 productJson.put("jcr:title", "ProductOfMine");
-                productJson.put("jcr:primaryType","cq:Component");
+                productJson.put("jcr:primaryType", "cq:Component");
                 productJson.put("name", product.getName());
                 productJson.put("description", product.getDescription());
 
@@ -63,12 +58,16 @@ public class ProductServiceImpl implements ProductService {
                 resp.getWriter().write(productJson.toString());
 
                 resolver.commit();
+
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 throw new PersistenceException("Error trying to persist product " + e.getMessage());
             }
 
             resolver.close();
+
+
         }
+
     }
 }

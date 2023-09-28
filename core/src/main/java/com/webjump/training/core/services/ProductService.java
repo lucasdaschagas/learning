@@ -1,6 +1,5 @@
 package com.webjump.training.core.services;
 
-import com.webjump.training.core.models.ProductOfMine;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.PersistenceException;
