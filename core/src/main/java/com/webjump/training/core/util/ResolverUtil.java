@@ -15,7 +15,7 @@ public class ResolverUtil {
     public ResolverUtil() {
     }
 
-    private static final String WEB_TRAIN_USER = "webtrainuser";
+    public static final String WEB_TRAIN_USER = "webtrainuser";
 
     public static ResourceResolver newResolver(ResourceResolverFactory factory) throws LoginException {
         final Map<String, Object> paramMap = new HashMap<String, Object>();

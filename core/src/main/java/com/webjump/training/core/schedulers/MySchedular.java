@@ -18,49 +18,40 @@ import java.util.concurrent.ScheduledFuture;
 
 public class MySchedular implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(MySchedular.class);
-    private int schedulerID;
+    //    private int schedulerID;
     @Reference
     private Scheduler scheduler;
     @Reference
-    private  ResourceResolverFactory resolverFactory;
+    private ResourceResolverFactory resolverFactory;
+
     private ScheduledFuture<?> scheduledFuture;
-    private ResourceResolver resolver;
-    private Resource resource;
-
-
-
-    public void bindScheduler(Scheduler scheduler){
-        this.scheduler = scheduler;
-    }
-    public void bindFactory(ResourceResolverFactory factory){
-        this.resolverFactory = factory;
-    }
 
     @Activate
-    protected void activate(SchedulerConfig config){
-        schedulerID = config.schedulerName().hashCode();
+    protected void activate(SchedulerConfig config) {
+//        schedulerID = config.schedulerName().hashCode();
         addScheduler(config);
     }
 
     @Deactivate
-    protected void deactivate(){
-        if (scheduledFuture != null){
+    protected void deactivate() {
+        if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
         }
     }
+
     @Modified
-    protected void modified(SchedulerConfig config){
-        removeScheduler();
+    protected void modified(SchedulerConfig config) {
+        removeScheduler(config);
         activate(config);
     }
 
-    private void removeScheduler(){
-        scheduler.unschedule(String.valueOf(schedulerID));
+    private void removeScheduler(SchedulerConfig config) {
+        scheduler.unschedule(config.schedulerName());
     }
 
-    public void addScheduler(SchedulerConfig config){
+    public void addScheduler(SchedulerConfig config) {
         ScheduleOptions scheduleOptions = scheduler.EXPR(config.time());
-        scheduleOptions.name(String.valueOf(schedulerID));
+        scheduleOptions.name(config.schedulerName());
         scheduleOptions.canRunConcurrently(false);
         scheduler.schedule(this, scheduleOptions);
         log.info("\n---------------Scheduler added---------------");
@@ -69,12 +60,12 @@ public class MySchedular implements Runnable {
     }
 
 
-
     @Override
     public void run() {
+        ResourceResolver resolver;
         try {
             resolver = ResolverUtil.newResolver(resolverFactory);
-            resource = resolver.getResource("/content/web-train/us/en/jcr:content/root/container/container/product_of_mine");
+            Resource resource = resolver.getResource("/content/web-train/us/en/jcr:content/root/container/container/product_of_mine");
             assert resource != null;
             ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
             assert valueMap != null;
@@ -90,6 +81,4 @@ public class MySchedular implements Runnable {
 
         log.info("\n---------------Scheduler running---------------");
     }
-
-
 }

@@ -1,10 +1,7 @@
 package com.webjump.training.core.schedulers;
-
-import com.webjump.training.core.util.ResolverUtil;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import org.apache.sling.api.resource.*;
-import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,71 +11,54 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.org.lidalia.slf4jtest.LoggingEvent;
-import uk.org.lidalia.slf4jtest.TestLogger;
-import uk.org.lidalia.slf4jtest.TestLoggerFactory;
-
-import java.util.List;
-import java.util.logging.Level;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.reflections.Reflections.log;
+
+
 
 @ExtendWith({AemContextExtension.class, MockitoExtension.class})
 class MySchedulerTest {
     @InjectMocks
     private MySchedular myScheduler;
-
-//    @Mock
-//    private Scheduler schedulerMock;
-
+    @Mock
     private SchedulerConfig config;
-    private int schedulerId;
-    private final AemContext context = new AemContext();
+    private final AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
+    @Mock
+    private ResourceResolverFactory factory;
+    @Mock
+    private ResourceResolver resolver;
+    @Mock
+    private Resource resource;
 
     @BeforeEach
     void setUp() {
-        myScheduler=context.registerService(new MySchedular());
-//        LOG=TestLoggerFactory.getTestLogger(myScheduler.getClass());
-        config=mock(SchedulerConfig.class);
-        when(config.schedulerName()).thenReturn("My custom scheduler");
-        when(config.time()).thenReturn("1/30 * * ? * * *");
+        MockitoAnnotations.openMocks(this);
+        myScheduler = mock(MySchedular.class);
+        context.load().json("src/test/resources/com.webjump.training.core.models.impl/ProductOfMineJsonTest.json","/content");
 
-//        myScheduler.bindScheduler(mock(schedulerMock.getClass()));
-
-
-//        myScheduler.bindFactory(mock(ResourceResolverFactory.class));
-//        myScheduler = context.registerService(new MySchedular());
-//        context.registerService(Scheduler.class, schedulerMock);
-
-
-//
-//        SchedulerConfig schedulerConfig = mock(SchedulerConfig.class);
-//        when(schedulerConfig.schedulerName()).thenReturn("My custom scheduler");
-//        when(schedulerConfig.time()).thenReturn("1/30 * * ? * * *");
-
-//        optionsTest = schedulerMock.EXPR(schedulerConfig.time());
-//        optionsTest.name(String.valueOf(schedulerIdTest));
-//        optionsTest.canRunConcurrently(false);
-//        schedulerMock.schedule(this,optionsTest);
-//        LOG.info("\n---------------Scheduler added---------------");
-//        ScheduleOptions scheduleOptionsNow = schedulerMock.NOW();
-//        schedulerMock.schedule(this,scheduleOptionsNow);
-
-//
-//        myScheduler.activate(schedulerConfig);
-//        LOG = TestLoggerFactory.getTestLogger(myScheduler.getClass());
-////        when(schedulerConfigMock.schedulerName()).thenReturn("My custom scheduler");
-////        when(schedulerConfigMock.time()).thenReturn("1/30 * * ? * * *");
     }
-
 
 
     @Test
     void testRun() throws LoginException {
+        config = mock(SchedulerConfig.class);
+        factory = mock(ResourceResolverFactory.class);
+        resource = mock(Resource.class);
+        resolver = mock(ResourceResolver.class);
+
+        resource = context.resourceResolver().getResource("/content/product_of_mine");
+
+        Resource mockedResource = resolver.getResource(String.valueOf(resource));
+
+        lenient().when(factory.getServiceResourceResolver(any())).thenReturn(resolver);
+        lenient().when(resolver.getResource(any())).thenReturn(mockedResource);
+
+        lenient().when(config.schedulerName()).thenReturn("My custom scheduler");
+        lenient().when(config.time()).thenReturn("1/30 * * ? * * *");
+
+        myScheduler.activate(config);
         myScheduler.run();
+
+
 //        verify(log).info("---------------Scheduler running---------------");
     }
 }
