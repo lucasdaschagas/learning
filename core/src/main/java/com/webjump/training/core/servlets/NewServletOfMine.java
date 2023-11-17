@@ -22,7 +22,7 @@ import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component(service = Servlet.class)
+@Component(service = { Servlet.class })
 @SlingServletResourceTypes(
         resourceTypes= "web-train/components/page",
         methods= {HttpConstants.METHOD_GET, HttpConstants.METHOD_POST}
@@ -31,7 +31,7 @@ import java.io.IOException;
 public class NewServletOfMine extends SlingAllMethodsServlet {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
-        @Reference
+
         private ProductServiceImpl service;
 
         public void bindService(ProductServiceImpl productService) {
